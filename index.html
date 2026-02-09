@@ -1,0 +1,436 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>QubitOS — Open-Source Quantum Control Kernel</title>
+    <meta name="description" content="Pulse optimization and hardware abstraction for quantum computing research. GRAPE optimizer, multi-qubit control, calibration management.">
+    <meta name="author" content="QubitOS Contributors">
+
+    <!-- Open Graph -->
+    <meta property="og:title" content="QubitOS — Open-Source Quantum Control Kernel">
+    <meta property="og:description" content="Pulse optimization and hardware abstraction for quantum computing research.">
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://qubit-os.github.io">
+
+    <style>
+        :root {
+            --purple: #7c3aed;
+            --purple-dark: #5b21b6;
+            --purple-light: #a78bfa;
+            --amber: #f59e0b;
+            --bg: #0f0b1a;
+            --bg-card: #1a1428;
+            --bg-code: #130f20;
+            --text: #e8e0f0;
+            --text-dim: #9b8fb8;
+            --border: #2d2345;
+            --green: #34d399;
+        }
+
+        @media (prefers-color-scheme: light) {
+            :root {
+                --bg: #faf8ff;
+                --bg-card: #ffffff;
+                --bg-code: #f5f0fa;
+                --text: #1a1028;
+                --text-dim: #6b5f80;
+                --border: #e0d8ee;
+            }
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+            background: var(--bg);
+            color: var(--text);
+            line-height: 1.6;
+            min-height: 100vh;
+        }
+
+        .container {
+            max-width: 960px;
+            margin: 0 auto;
+            padding: 0 24px;
+        }
+
+        /* Header */
+        header {
+            padding: 20px 0;
+            border-bottom: 1px solid var(--border);
+        }
+        header .container {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+        .logo {
+            font-size: 1.25rem;
+            font-weight: 700;
+            color: var(--purple-light);
+            text-decoration: none;
+            letter-spacing: -0.02em;
+        }
+        .logo span { color: var(--text); }
+        nav a {
+            color: var(--text-dim);
+            text-decoration: none;
+            margin-left: 28px;
+            font-size: 0.9rem;
+            transition: color 0.15s;
+        }
+        nav a:hover { color: var(--text); }
+
+        /* Hero */
+        .hero {
+            padding: 80px 0 60px;
+            text-align: center;
+        }
+        .hero h1 {
+            font-size: 2.8rem;
+            font-weight: 800;
+            letter-spacing: -0.03em;
+            line-height: 1.15;
+            margin-bottom: 16px;
+        }
+        .hero h1 .accent { color: var(--purple-light); }
+        .hero p {
+            font-size: 1.15rem;
+            color: var(--text-dim);
+            max-width: 600px;
+            margin: 0 auto 32px;
+        }
+        .version-badge {
+            display: inline-block;
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 20px;
+            padding: 4px 14px;
+            font-size: 0.8rem;
+            color: var(--green);
+            font-weight: 600;
+            margin-bottom: 24px;
+        }
+        .hero-buttons {
+            display: flex;
+            gap: 12px;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+        .btn {
+            display: inline-block;
+            padding: 12px 28px;
+            border-radius: 8px;
+            font-size: 0.95rem;
+            font-weight: 600;
+            text-decoration: none;
+            transition: all 0.15s;
+        }
+        .btn-primary {
+            background: var(--purple);
+            color: #fff;
+        }
+        .btn-primary:hover { background: var(--purple-dark); }
+        .btn-secondary {
+            background: transparent;
+            color: var(--text);
+            border: 1px solid var(--border);
+        }
+        .btn-secondary:hover { border-color: var(--purple-light); color: var(--purple-light); }
+
+        /* Code block */
+        .code-block {
+            background: var(--bg-code);
+            border: 1px solid var(--border);
+            border-radius: 10px;
+            padding: 24px 28px;
+            text-align: left;
+            max-width: 640px;
+            margin: 40px auto 0;
+            overflow-x: auto;
+        }
+        .code-block pre {
+            font-family: "JetBrains Mono", "Fira Code", "Cascadia Code", monospace;
+            font-size: 0.85rem;
+            line-height: 1.65;
+            color: var(--text);
+        }
+        .code-block .comment { color: var(--text-dim); }
+        .code-block .keyword { color: var(--purple-light); }
+        .code-block .string { color: var(--green); }
+        .code-block .number { color: var(--amber); }
+
+        /* Features grid */
+        .features {
+            padding: 60px 0;
+            border-top: 1px solid var(--border);
+        }
+        .features h2 {
+            text-align: center;
+            font-size: 1.6rem;
+            margin-bottom: 40px;
+            font-weight: 700;
+        }
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+            gap: 20px;
+        }
+        .card {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 10px;
+            padding: 28px;
+        }
+        .card h3 {
+            font-size: 1.05rem;
+            margin-bottom: 8px;
+            font-weight: 700;
+        }
+        .card p {
+            color: var(--text-dim);
+            font-size: 0.9rem;
+        }
+        .card .tag {
+            display: inline-block;
+            font-size: 0.75rem;
+            padding: 2px 10px;
+            border-radius: 12px;
+            margin-top: 12px;
+            font-weight: 600;
+        }
+        .tag-python { background: #1e3a5f; color: #60a5fa; }
+        .tag-rust { background: #3b1f0b; color: #fb923c; }
+        .tag-proto { background: #1a2e1a; color: #4ade80; }
+
+        @media (prefers-color-scheme: light) {
+            .tag-python { background: #dbeafe; color: #1d4ed8; }
+            .tag-rust { background: #fed7aa; color: #c2410c; }
+            .tag-proto { background: #d1fae5; color: #047857; }
+        }
+
+        /* Stats */
+        .stats {
+            padding: 40px 0;
+            border-top: 1px solid var(--border);
+        }
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+            gap: 20px;
+            text-align: center;
+        }
+        .stat-value {
+            font-size: 2rem;
+            font-weight: 800;
+            color: var(--purple-light);
+        }
+        .stat-label {
+            font-size: 0.85rem;
+            color: var(--text-dim);
+        }
+
+        /* Architecture */
+        .architecture {
+            padding: 60px 0;
+            border-top: 1px solid var(--border);
+        }
+        .architecture h2 {
+            text-align: center;
+            font-size: 1.6rem;
+            margin-bottom: 12px;
+            font-weight: 700;
+        }
+        .architecture > .container > p {
+            text-align: center;
+            color: var(--text-dim);
+            margin-bottom: 32px;
+            font-size: 0.95rem;
+        }
+        .arch-diagram {
+            background: var(--bg-code);
+            border: 1px solid var(--border);
+            border-radius: 10px;
+            padding: 28px;
+            overflow-x: auto;
+        }
+        .arch-diagram pre {
+            font-family: "JetBrains Mono", "Fira Code", monospace;
+            font-size: 0.8rem;
+            line-height: 1.5;
+            color: var(--text-dim);
+            text-align: center;
+        }
+
+        /* Footer */
+        footer {
+            padding: 40px 0;
+            border-top: 1px solid var(--border);
+            text-align: center;
+            color: var(--text-dim);
+            font-size: 0.85rem;
+        }
+        footer a {
+            color: var(--purple-light);
+            text-decoration: none;
+        }
+        footer a:hover { text-decoration: underline; }
+    </style>
+</head>
+<body>
+
+<header>
+    <div class="container">
+        <a href="/" class="logo">Qubit<span>OS</span></a>
+        <nav>
+            <a href="https://qubit-os.github.io/qubit-os-core/">Docs</a>
+            <a href="https://qubit-os.github.io/qubit-os-core/api/">API</a>
+            <a href="https://github.com/qubit-os">GitHub</a>
+        </nav>
+    </div>
+</header>
+
+<section class="hero">
+    <div class="container">
+        <div class="version-badge">v0.3.0 — Multi-Qubit Expansion</div>
+        <h1>Open-Source <span class="accent">Quantum Control</span> Kernel</h1>
+        <p>Pulse optimization and hardware abstraction for quantum computing research. GRAPE optimizer, multi-qubit scheduling, symplectic Clifford benchmarking.</p>
+        <div class="hero-buttons">
+            <a href="https://qubit-os.github.io/qubit-os-core/guides/quickstart/" class="btn btn-primary">Get Started</a>
+            <a href="https://github.com/qubit-os/qubit-os-core" class="btn btn-secondary">View on GitHub</a>
+        </div>
+
+        <div class="code-block">
+<pre><span class="keyword">from</span> qubitos.pulsegen <span class="keyword">import</span> generate_pulse
+
+<span class="comment"># Optimize a 2-qubit CZ gate pulse</span>
+result = generate_pulse(
+    gate=<span class="string">"CZ"</span>,
+    num_qubits=<span class="number">2</span>,
+    duration_ns=<span class="number">80</span>,
+    target_fidelity=<span class="number">0.999</span>,
+)
+<span class="keyword">print</span>(f<span class="string">"Fidelity: {result.fidelity:.4f}"</span>)  <span class="comment"># → 0.9983</span></pre>
+        </div>
+    </div>
+</section>
+
+<section class="stats">
+    <div class="container">
+        <div class="stats-grid">
+            <div>
+                <div class="stat-value">947</div>
+                <div class="stat-label">Tests passing</div>
+            </div>
+            <div>
+                <div class="stat-value">91%</div>
+                <div class="stat-label">Code coverage</div>
+            </div>
+            <div>
+                <div class="stat-value">n≤5</div>
+                <div class="stat-label">Qubit GRAPE</div>
+            </div>
+            <div>
+                <div class="stat-value">99%+</div>
+                <div class="stat-label">Gate fidelity</div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<section class="features">
+    <div class="container">
+        <h2>Three Repositories, One System</h2>
+        <div class="grid">
+            <div class="card">
+                <h3>qubit-os-core</h3>
+                <p>GRAPE pulse optimization, pulse scheduling, calibration management, error budgets, Clifford benchmarking, and CLI tooling.</p>
+                <span class="tag tag-python">Python</span>
+            </div>
+            <div class="card">
+                <h3>qubit-os-hardware</h3>
+                <p>Hardware Abstraction Layer — unified gRPC interface to quantum backends (QuTiP simulator, IQM Garnet, future hardware).</p>
+                <span class="tag tag-rust">Rust</span>
+            </div>
+            <div class="card">
+                <h3>qubit-os-proto</h3>
+                <p>Protocol Buffer definitions for all IPC — pulse envelopes, measurement results, calibration data, error budgets.</p>
+                <span class="tag tag-proto">Protobuf</span>
+            </div>
+        </div>
+    </div>
+</section>
+
+<section class="features">
+    <div class="container">
+        <h2>Core Capabilities</h2>
+        <div class="grid">
+            <div class="card">
+                <h3>🎯 GRAPE Optimizer</h3>
+                <p>Multi-qubit gradient ascent pulse engineering with per-qubit envelopes, dimension-scaled learning rates, and ZZ coupling drift Hamiltonians.</p>
+            </div>
+            <div class="card">
+                <h3>📅 Pulse Scheduler</h3>
+                <p>ASAP scheduling with topological sort, constraint system (sequential, simultaneous, aligned), crosstalk avoidance, AWG grid alignment.</p>
+            </div>
+            <div class="card">
+                <h3>📊 Error Budgets</h3>
+                <p>Cumulative error tracking across sequences — gate infidelity, T1/T2 decoherence, leakage, crosstalk, readout errors with fidelity prediction.</p>
+            </div>
+            <div class="card">
+                <h3>🔬 Benchmarking</h3>
+                <p>Single and multi-qubit randomized benchmarking with symplectic Clifford tableaux, RB decay fitting, error-per-Clifford extraction.</p>
+            </div>
+            <div class="card">
+                <h3>⚙️ Parametric Gates</h3>
+                <p>Google fSim(θ,φ) family and IBM cross-resonance gates with full parameterization for hardware-native gate sets.</p>
+            </div>
+            <div class="card">
+                <h3>🔒 Provenance</h3>
+                <p>Merkle tree experiment tracking with content-addressed storage, automatic diffing, and reproducibility verification.</p>
+            </div>
+        </div>
+    </div>
+</section>
+
+<section class="architecture">
+    <div class="container">
+        <h2>Architecture</h2>
+        <p>Layered design separating physics from hardware</p>
+        <div class="arch-diagram">
+<pre>
+┌──────────────────────────────────────────────────┐
+│                  User Layer                      │
+│    CLI  ·  Python API  ·  Jupyter Notebooks      │
+└──────────────────────┬───────────────────────────┘
+                       │
+┌──────────────────────▼───────────────────────────┐
+│               qubit-os-core                      │
+│  Pulse Gen · Scheduler · Calibrator · Provenance │
+│  Error Budget · Benchmarking · Validation        │
+└──────────────────────┬───────────────────────────┘
+                       │ protobuf
+┌──────────────────────▼───────────────────────────┐
+│             qubit-os-hardware                    │
+│           HAL Server (Rust + gRPC)               │
+│    QuTiP Sim  ·  IQM Garnet  ·  Future HW       │
+└──────────────────────────────────────────────────┘
+</pre>
+        </div>
+    </div>
+</section>
+
+<footer>
+    <div class="container">
+        <p>
+            Apache 2.0 · <a href="https://github.com/qubit-os">GitHub</a> ·
+            <a href="https://qubit-os.github.io/qubit-os-core/">Documentation</a> ·
+            <a href="https://github.com/qubit-os/qubit-os-core/blob/main/CONTRIBUTING.md">Contributing</a>
+        </p>
+        <p style="margin-top: 8px;">© 2026 QubitOS Contributors</p>
+    </div>
+</footer>
+
+</body>
+</html>
