@@ -37,18 +37,21 @@ abstraction layer.</p>
 <pre>git clone https://github.com/qubit-os/qubit-os</pre>
 
 <ul>
-<li><code>core/</code> &mdash; Python: GRAPE optimizer, SME solver, calibration, CLI</li>
-<li><code>hal/</code> &mdash; Rust: gRPC server, backend dispatch, Lindblad and SME solvers</li>
+<li><code>core/</code> &mdash; Python: GRAPE optimizer, SME solver, Lyapunov feedback, CLI</li>
+<li><code>hal/</code> &mdash; Rust: gRPC server, backend dispatch, Lindblad / SME / feedback</li>
 <li><code>proto/</code> &mdash; Protocol Buffer API contracts</li>
 </ul>
 
 <h2>Current release</h2>
 
-<p>v0.6.0 (2026-05-16). Stochastic master equation solver: It&#244; SDE
-integrator, Monte Carlo ensemble with Rayon parallelism, validation
-against QuTiP smesolve, agentbible-backed numerical decoration.</p>
+<p>v0.7.0 (2026-05-16). Lyapunov feedback controller on top of the v0.6.0
+SME runtime: diagonal-gain feedback law, open-loop vs closed-loop
+comparison framework, matplotlib visualization helpers, and a Rust
+feedback hot path with PyO3 bindings (~150x over the Python reference,
+cross-validated to 1e-12). Library API only.</p>
 
-<p>Next milestone: v0.7.0, Lyapunov feedback controller. See the
+<p>Next milestone: v0.8.0, 3-level transmon with leakage-aware Lyapunov
+control. See the
 <a href="https://github.com/qubit-os/qubit-os/blob/main/ROADMAP.txt">roadmap</a>.</p>
 
 <h2>Backend integration honesty</h2>
